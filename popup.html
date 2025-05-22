@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TermsSnap - T&C Analyzer</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-content">
+        <div class="logo-title">
+          <svg class="logo" viewBox="0 0 24 24" width="24" height="24">
+            <rect width="24" height="24" rx="4" fill="#1a73e8"/>
+            <path d="M6 6H18V18H6V6ZM8 8V16H16V8H8ZM11 11V13H13V11H11Z" fill="white"/>
+          </svg>
+          <div>
+            <h1>TermsSnap</h1>
+            <p class="subtitle">AI-Powered Terms & Conditions Analyzer</p>
+          </div>
+        </div>
+        <button id="settingsButton" class="icon-button" title="Settings">
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+    </header>
+    
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Analyzing page content...</p>
+    </div>
+    
+    <div id="summary" class="hidden">
+      <div class="score-container">
+        <div class="score-circle">
+          <span id="risk-score">0</span>%
+          <div class="score-label">Risk Score</div>
+        </div>
+        <div id="verdict" class="verdict"></div>
+      </div>
+      
+      <div id="summary-content" class="summary-content">
+        <h2><i class="fas fa-key"></i> Key Points</h2>
+        <div id="key-points" class="key-points"></div>
+        
+        <div class="sections">
+          <h3><i class="fas fa-search"></i> Detailed Analysis</h3>
+          <div id="sections-container"></div>
+        </div>
+      </div>
+      
+      <div class="actions">
+        <button id="viewFullPage" class="action-button secondary">
+          <i class="fas fa-external-link-alt"></i> View Full Page
+        </button>
+        <button id="analyzeAgain" class="action-button primary">
+          <i class="fas fa-sync-alt"></i> Analyze Again
+        </button>
+      </div>
+    </div>
+    
+    <div id="error" class="error hidden">
+      <div class="error-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div class="error-content">
+        <h3>No Terms & Conditions Found</h3>
+        <p>We couldn't find any Terms & Conditions on this page. Try navigating to a page with:</p>
+        <ul>
+          <li>Terms of Service</li>
+          <li>Privacy Policy</li>
+          <li>Legal Notices</li>
+          <li>Terms & Conditions</li>
+        </ul>
+      </div>
+      <button id="tryAgain" class="action-button">
+        <i class="fas fa-redo"></i> Try Again
+      </button>
+    </div>
+    
+    <footer>
+      <p class="disclaimer">
+        <i class="fas fa-info-circle"></i> This is not legal advice. Always read the full terms before agreeing.
+      </p>
+    </footer>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

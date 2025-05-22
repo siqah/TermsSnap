@@ -1,0 +1,22 @@
+{
+  "name": "termssnap",
+  "version": "1.0.0",
+  "description": "AI-Powered Terms & Conditions Analyzer Chrome Extension",
+  "main": "background.js",
+  "scripts": {
+    "generate-icons": "node generate_icons.js",
+    "build": "npm run generate-icons"
+  },
+  "keywords": [
+    "chrome-extension",
+    "terms-and-conditions",
+    "privacy-policy",
+    "ai",
+    "nlp"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "canvas": "^2.11.2"
+  }
+}

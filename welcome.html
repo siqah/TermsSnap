@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to TermsSnap</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+      color: #333;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .logo {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 20px;
+      display: block;
+    }
+    h1 {
+      color: #1a73e8;
+      margin: 0 0 10px 0;
+    }
+    .subtitle {
+      font-size: 18px;
+      color: #5f6368;
+      margin: 0 0 30px 0;
+    }
+    .feature {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .feature-icon {
+      font-size: 24px;
+      margin-right: 15px;
+      color: #1a73e8;
+      min-width: 30px;
+      text-align: center;
+    }
+    .feature-content h3 {
+      margin: 0 0 8px 0;
+      color: #202124;
+    }
+    .feature-content p {
+      margin: 0;
+      color: #5f6368;
+    }
+    .cta-button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: #1a73e8;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 500;
+      margin: 30px 0;
+      transition: background-color 0.2s;
+    }
+    .cta-button:hover {
+      background: #0d47a1;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #5f6368;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <svg class="logo" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="128" height="128" rx="16" fill="#1a73e8"/>
+      <path d="M32 32H96V96H32V32ZM40 40V88H88V40H40ZM56 56V72H72V56H56Z" fill="white"/>
+    </svg>
+    <h1>Welcome to TermsSnap</h1>
+    <p class="subtitle">Your AI-powered Terms & Conditions analyzer</p>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">🔍</div>
+      <div class="feature-content">
+        <h3>Automatic Detection</h3>
+        <p>TermsSnap automatically detects when you're viewing a Terms & Conditions page and highlights key points for you.</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-content">
+        <h3>Quick Analysis</h3>
+        <p>Get instant summaries of lengthy legal documents, so you can make informed decisions without reading every word.</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">🛡️</div>
+      <div class="feature-content">
+        <h3>Risk Assessment</h3>
+        <p>Understand the potential risks and implications of terms with our easy-to-understand risk scoring system.</p>
+      </div>
+    </div>
+  </div>
+
+  <a href="#" id="getStarted" class="cta-button">Get Started</a>
+
+  <div class="footer">
+    <p>TermsSnap is currently in beta. We're constantly improving to provide you with better insights.</p>
+    <p>Need help? <a href="#" id="learnMore">Learn more</a> about using TermsSnap.</p>
+  </div>
+
+  <script>
+    document.getElementById('getStarted').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.close();
+    });
+
+    document.getElementById('learnMore').addEventListener('click', (e) => {
+      e.preventDefault();
+      chrome.tabs.create({
+        url: 'https://github.com/yourusername/termssnap#readme'
+      });
+    });
+  </script>
+</body>
+</html>
