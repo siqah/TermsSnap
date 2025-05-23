@@ -1,15 +1,16 @@
-# TermsSnap - AI-Powered Terms & Conditions Analyzer
+# TermsSnap - Terms & Conditions Analyzer
 
-A Chrome extension that helps users understand and evaluate Terms & Conditions agreements by providing AI-powered summaries and risk assessments.
+A Chrome extension that helps users understand and evaluate Terms & Conditions agreements by providing summaries and risk assessments.
 
 ## Features
 
 - 🔍 Automatic detection of Terms & Conditions pages
-- 📝 AI-powered summarization of key points
+- 📝 Summarization of key points
 - ⚠️ Risk assessment of concerning clauses
 - 🎨 Clean, user-friendly interface
-- 🔒 Local processing option for privacy
+- 🔒 Local processing for enhanced privacy
 - 📱 Responsive design that works on all screen sizes
+- 🎨 Customizable icon set for different states
 
 ## Installation
 
@@ -36,14 +37,39 @@ A Chrome extension that helps users understand and evaluate Terms & Conditions a
 - `content.js` - Content script for page analysis
 - `background.js` - Background script for extension functionality
 - `styles.css` - Styling for the popup
-- `images/` - Extension icons and assets
+- `icons/` - Extension icons in various sizes (generated)
+- `generate_icons.py` - Script to generate icons in required sizes
+- `background/` - Background service worker scripts
+- `utils/` - Utility functions and helpers
+
+### Icon Generation
+
+To generate icons in all required sizes from a high-resolution source image:
+
+1. Install the required Python packages:
+   ```bash
+   pip install pillow
+   ```
+
+2. Run the icon generation script with your source image:
+   ```bash
+   python generate_icons.py /path/to/your/icon.png
+   ```
+
+   This will create an `icons` directory with the following files:
+   - `icon16.png` (16x16)
+   - `icon32.png` (32x32)
+   - `icon48.png` (48x48, active state)
+   - `icon48-inactive.png` (48x48, inactive state)
+   - `icon128.png` (128x128)
 
 ### Building for Production
 
-1. Run `npm install` (if you have any build dependencies)
-2. Make your changes
-3. Test the extension in Chrome
-4. Create a ZIP file of the extension directory for distribution
+1. Generate all required icons (see Icon Generation section above)
+2. Run `npm install` (if you have any build dependencies)
+3. Make your changes
+4. Test the extension in Chrome
+5. Create a ZIP file of the extension directory for distribution
 
 ## Privacy
 

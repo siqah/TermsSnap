@@ -1,36 +1,55 @@
 {
   "name": "TermsSnap",
-  "version": "1.0",
-  "description": "AI-powered Terms & Conditions summarizer",
+  "version": "1.0.0",
+  "description": "Analyze and understand Terms & Conditions and Privacy Policies",
   "manifest_version": 3,
-  "permissions": ["activeTab", "storage", "notifications"],
-  "host_permissions": ["<all_urls>"],
+  "permissions": [
+    "activeTab",
+    "storage",
+    "notifications",
+    "scripting",
+    "tabs"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "images/icon16.svg",
-      "48": "images/icon48.svg",
-      "128": "images/icon128.svg"
-    }
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    },
+    "default_title": "TermsSnap - Analyze Terms & Conditions"
   },
   "icons": {
-    "16": "images/icon16.svg",
-    "48": "images/icon48.svg",
-    "128": "images/icon128.svg"
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
   "content_scripts": [
     {
-      "matches": ["*://*/*terms*", "*://*/*privacy*", "*://*/*tos*", "*://*/*conditions*"],
-      "js": ["content.js"]
+      "matches": ["<all_urls>", "file://*/*"],
+      "exclude_matches": ["*://*.google.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false,
+      "match_about_blank": true
     }
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "web_accessible_resources": [
     {
-      "resources": ["*.json", "*.css"],
-      "matches": ["<all_urls>"]
+      "resources": ["icons/*.png"],
+      "matches": ["<all_urls>"],
+      "use_dynamic_url": true
     }
   ]
 }
