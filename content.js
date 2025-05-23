@@ -17,38 +17,50 @@ notifyBackgroundPage();
 
 // Main analysis function
 function analyzePage() {
-  try {
-    // Get page content
-    const pageText = extractMainContent();
-    const url = window.location.href;
-    const title = document.title;
-    
-    // Basic analysis
-    const analysis = analyzeContent(pageText);
-    
-    // Add metadata
-    analysis.metadata = {
-      analyzedAt: new Date().toISOString(),
-      url,
-      title,
-      contentLength: pageText.length
-    };
-    
-    return analysis;
-    
-  } catch (error) {
-    console.error('Error analyzing page:', error);
-    return {
-      error: true,
-      message: 'Error analyzing page: ' + error.message,
-      riskScore: 0,
-      summary: 'Error analyzing page',
-      keyPoints: [],
-      concerns: ['Unable to analyze page content'],
-      dataCollection: [],
-      userRights: []
-    };
-  }
+  return new Promise(async (resolve) => {
+    try {
+      console.log('Starting analysis...');
+      
+      // Get page content first
+      const pageText = extractMainContent();
+      const url = window.location.href;
+      const title = document.title;
+      
+      console.log('Content extracted, analyzing...');
+      
+      // Start analysis and timer in parallel
+      const analysisPromise = analyzeContent(pageText);
+      const timerPromise = new Promise(resolve => setTimeout(resolve, 3000));
+      
+      // Wait for both analysis and minimum delay
+      const [analysis] = await Promise.all([analysisPromise, timerPromise]);
+      
+      // Add metadata
+      analysis.metadata = {
+        analyzedAt: new Date().toISOString(),
+        url,
+        title,
+        contentLength: pageText.length,
+        processingTime: '3s+ (simulated)'
+      };
+      
+      console.log('Analysis complete');
+      resolve(analysis);
+      
+    } catch (error) {
+      console.error('Error in analyzePage:', error);
+      resolve({
+        error: true,
+        message: error.message || 'Error analyzing page',
+        riskScore: 0,
+        summary: 'Error analyzing page',
+        keyPoints: [],
+        concerns: ['Unable to analyze page content'],
+        dataCollection: [],
+        userRights: []
+      });
+    }
+  });
 }
 
 // Extract main content from the page
@@ -341,7 +353,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     (async () => {
       try {
         console.log('Starting page analysis...');
-        const analysis = analyzePage();
+        const analysis = await new Promise(resolve => {
+          setTimeout(() => {
+            resolve(analyzeContent(document.body.innerText));
+          }, 3000);
+        });
         
         // Add additional metadata
         analysis.metadata = analysis.metadata || {};

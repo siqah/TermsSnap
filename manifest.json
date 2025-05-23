@@ -32,16 +32,21 @@
     {
       "matches": ["<all_urls>", "file://*/*"],
       "exclude_matches": ["*://*.google.com/*"],
-      "js": ["content.js"],
+      "js": [
+        "js/shared-settings.js",
+        "js/content-features.js"
+      ],
       "run_at": "document_idle",
       "all_frames": false,
-      "match_about_blank": true
+      "match_about_blank": true,
+      "type": "module"
     }
   ],
   "background": {
-    "service_worker": "background.js",
+    "service_worker": "js/background.js",
     "type": "module"
   },
+  "options_page": "settings.html",
   "host_permissions": [
     "<all_urls>"
   ],
