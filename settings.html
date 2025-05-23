@@ -5,33 +5,40 @@
   <title>TermsSnap Settings</title>
   <link rel="stylesheet" href="styles.css">
   <style>
+    body {
+      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
     .settings-container {
-      max-width: 600px;
+      width: 400px;
       margin: 0 auto;
       padding: 20px;
     }
     .setting-group {
       background: white;
-      border-radius: 8px;
-      padding: 20px;
+      border-radius: 12px;
+      padding: 24px;
       margin-bottom: 20px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
     .setting-group h2 {
-      margin-top: 0;
+      margin: 0 0 20px 0;
       color: #1a73e8;
       font-size: 18px;
-      border-bottom: 1px solid #e1e4e8;
+      font-weight: 500;
       padding-bottom: 10px;
-      margin-bottom: 20px;
+      border-bottom: 1px solid #e8eaed;
     }
     .setting-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #f1f3f4;
     }
     .setting-item:last-child {
       border-bottom: none;
@@ -40,10 +47,12 @@
     }
     .setting-label {
       flex: 1;
+      padding-right: 15px;
     }
     .setting-label h3 {
-      margin: 0 0 5px 0;
-      font-size: 15px;
+      margin: 0 0 4px 0;
+      font-size: 14px;
+      font-weight: 500;
       color: #202124;
     }
     .setting-label p {
@@ -55,9 +64,10 @@
     .switch {
       position: relative;
       display: inline-block;
-      width: 50px;
+      width: 44px;
       height: 24px;
-      margin-left: 15px;
+      margin-left: 10px;
+      flex-shrink: 0;
     }
     .switch input {
       opacity: 0;
@@ -71,78 +81,67 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: #ccc;
-      transition: .4s;
+      background-color: #dadce0;
+      transition: .2s;
       border-radius: 24px;
     }
     .slider:before {
       position: absolute;
       content: "";
-      height: 16px;
-      width: 16px;
-      left: 4px;
-      bottom: 4px;
+      height: 20px;
+      width: 20px;
+      left: 2px;
+      bottom: 2px;
       background-color: white;
-      transition: .4s;
+      transition: .2s;
       border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
     input:checked + .slider {
       background-color: #1a73e8;
     }
     input:focus + .slider {
-      box-shadow: 0 0 1px #1a73e8;
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
     }
     input:checked + .slider:before {
-      transform: translateX(26px);
+      transform: translateX(20px);
     }
-    select {
-      padding: 8px 12px;
+    .buttons {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      gap: 10px;
+    }
+    button {
+      padding: 8px 16px;
       border-radius: 4px;
-      border: 1px solid #dadce0;
-      background-color: white;
       font-size: 14px;
-      color: #202124;
-      min-width: 200px;
-    }
-    .api-key-input {
-      width: 100%;
-      padding: 8px 12px;
-      border-radius: 4px;
-      border: 1px solid #dadce0;
-      font-size: 14px;
-      margin-top: 5px;
-    }
-    .save-button {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      background: #1a73e8;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 15px;
       font-weight: 500;
       cursor: pointer;
       transition: background-color 0.2s;
     }
-    .save-button:hover {
-      background: #0d47a1;
+    #saveSettings {
+      background-color: #1a73e8;
+      color: white;
+      border: none;
     }
-    .save-button:disabled {
-      background: #dadce0;
-      cursor: not-allowed;
+    #saveSettings:hover {
+      background-color: #1765d1;
     }
-    .status-message {
-      text-align: center;
+    #cancelButton {
+      background-color: #f1f3f4;
+      color: #5f6368;
+      border: 1px solid #dadce0;
+    }
+    #cancelButton:hover {
+      background-color: #e8eaed;
+    }
+    #statusMessage {
       margin-top: 15px;
-      font-size: 14px;
+      font-size: 13px;
       min-height: 20px;
-    }
-    .success {
-      color: #0f9d58;
-    }
-    .error {
-      color: #d93025;
+      text-align: right;
+      color: #5f6368;
     }
   </style>
 </head>
@@ -154,10 +153,10 @@
       <div class="setting-item">
         <div class="setting-label">
           <h3>Auto-detect Terms Pages</h3>
-          <p>Automatically detect when you're on a Terms & Conditions page</p>
+          <p>Automatically analyze pages that appear to contain terms and conditions</p>
         </div>
         <label class="switch">
-          <input type="checkbox" id="autoDetect" checked>
+          <input type="checkbox" id="autoDetect">
           <span class="slider"></span>
         </label>
       </div>
@@ -165,42 +164,21 @@
       <div class="setting-item">
         <div class="setting-label">
           <h3>Show Notifications</h3>
-          <p>Show a notification when a Terms & Conditions page is detected</p>
+          <p>Show desktop notifications when analysis is complete</p>
         </div>
         <label class="switch">
-          <input type="checkbox" id="showNotifications" checked>
+          <input type="checkbox" id="showNotifications">
           <span class="slider"></span>
         </label>
       </div>
     </div>
     
-    <div class="setting-group">
-      <h2>Analysis Method</h2>
-      
-      <div class="setting-item">
-        <div class="setting-label">
-          <h3>Analysis Engine</h3>
-          <p>Choose how you want to analyze Terms & Conditions</p>
-        </div>
-        <select id="analysisMethod">
-          <option value="local">Local Analysis (Basic)</option>
-          <option value="api">Cloud Analysis (More Accurate)</option>
-        </select>
-      </div>
-      
-      <div id="apiKeyContainer" style="display: none;">
-        <div class="setting-item">
-          <div class="setting-label">
-            <h3>API Key</h3>
-            <p>Enter your API key for cloud analysis</p>
-            <input type="password" id="apiKey" class="api-key-input" placeholder="sk_...">
-          </div>
-        </div>
-      </div>
+    <div class="buttons">
+      <button id="cancelButton">Cancel</button>
+      <button id="saveSettings">Save Changes</button>
     </div>
     
-    <button id="saveSettings" class="save-button">Save Settings</button>
-    <div id="statusMessage" class="status-message"></div>
+    <div id="statusMessage"></div>
   </div>
   
   <script src="settings.js"></script>

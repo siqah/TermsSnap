@@ -2,28 +2,16 @@
 const DEFAULT_SETTINGS = {
   autoDetect: true,
   showNotifications: true,
-  analysisMethod: 'local', // 'local' or 'api'
-  apiEndpoint: ''
+  theme: 'light',
+  analyzeLocalFiles: true
 };
 
-// Handle installation
-chrome.runtime.onInstalled.addListener(() => {
-  console.log('TermsSnap extension installed');
-  
-  // Set default settings if not already set
-  chrome.storage.sync.get('settings', (data) => {
-    if (!data.settings) {
-      chrome.storage.sync.set({ settings: DEFAULT_SETTINGS });
-    }
-  });
-});
+// Track active tabs and their analysis state
+const tabAnalysisState = new Map();
 
-// Listen for tab updates to detect when a terms page is loaded
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete' && tab.url) {
-    checkIfTermsPage(tabId, tab.url);
-  }
-});
+// Set up listeners
+chrome.runtime.onInstalled.addListener(initializeExtension);
+chrome.tabs.onUpdated.addListener(handleTabUpdate);
 
 // Listen for tab switching
 chrome.tabs.onActivated.addListener((activeInfo) => {
@@ -34,13 +22,78 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   });
 });
 
+// Handle extension installation or update
+function initializeExtension(details) {
+  console.log('Extension installed/updated:', details.reason);
+  
+  // Set default settings if they don't exist
+  chrome.storage.sync.get(['settings'], (result) => {
+    if (!result.settings) {
+      chrome.storage.sync.set({ settings: DEFAULT_SETTINGS });
+    }
+  });
+}
+
+// Handle tab updates
+function handleTabUpdate(tabId, changeInfo, tab) {
+  // Only proceed if the tab is fully loaded and has a URL
+  if (changeInfo.status === 'complete' && tab.url) {
+    console.log(`Tab ${tabId} updated:`, tab.url);
+    checkIfTermsPage(tabId, tab.url);
+    
+    // If this is a local file and we haven't analyzed it yet, set a timeout to analyze it
+    if (tab.url.startsWith('file://') && !tabAnalysisState.has(tabId)) {
+      console.log('Local file detected, scheduling analysis...');
+      tabAnalysisState.set(tabId, { analyzed: false });
+      
+      // Give the page some time to load completely
+      setTimeout(() => {
+        analyzeTab(tabId);
+      }, 1000);
+    }
+  }
+}
+
+// Analyze a specific tab
+function analyzeTab(tabId) {
+  console.log(`Analyzing tab ${tabId}...`);
+  
+  // Send message to content script
+  chrome.tabs.sendMessage(
+    tabId,
+    { action: 'analyzePage' },
+    (response) => {
+      if (chrome.runtime.lastError) {
+        console.error('Error analyzing tab:', chrome.runtime.lastError);
+        return;
+      }
+      
+      console.log('Analysis response:', response);
+      
+      if (response && response.analysis) {
+        // Update the tab analysis state
+        tabAnalysisState.set(tabId, { 
+          analyzed: true,
+          analysis: response.analysis,
+          lastUpdated: new Date().toISOString()
+        });
+        
+        // Update the extension icon
+        updateExtensionIcon(tabId, true);
+      }
+    }
+  );
+}
+
 async function checkIfTermsPage(tabId, url) {
   try {
     // Skip chrome://, chrome-extension://, etc.
-    if (!url.startsWith('http')) {
+    if (!url.startsWith('http') && !url.startsWith('file://')) {
       updateExtensionIcon(tabId, false);
       return;
     }
+    
+    console.log(`Checking if page is a terms page: ${url}`);
 
     // Check if the URL matches common terms page patterns
     const termsPatterns = [
@@ -90,139 +143,90 @@ async function checkIfTermsPage(tabId, url) {
   }
 }
 
+/**
+ * Updates the extension icon based on whether the current page is a terms page
+ * @param {number} tabId - The ID of the tab to update the icon for
+ * @param {boolean} isActive - Whether the current page is a terms page
+ */
 function updateExtensionIcon(tabId, isActive) {
-  const iconPath = isActive ? 'active' : 'inactive';
-  const iconSizes = [16, 48, 128];
-  
-  const iconPaths = iconSizes.reduce((acc, size) => {
-    acc[size] = `images/icon${isActive ? '_active' : ''}${size}.svg`;
-    return acc;
-  }, {});
-  
-  chrome.action.setIcon({
-    tabId: tabId,
-    path: iconPaths
-  });
+  try {
+    // Determine which icon to use
+    const iconPath = isActive 
+      ? 'icons/icon48.png' 
+      : 'icons/icon48-inactive.png';
+    
+    // Set the icon for the specific tab
+    chrome.action.setIcon({
+      path: {
+        '16': 'icons/icon16.png',
+        '32': 'icons/icon32.png',
+        '48': 'icons/icon48.png',
+        '128': 'icons/icon128.png'
+      },
+      tabId: tabId
+    }).then(() => {
+      console.log(`Icon updated for tab ${tabId} (${isActive ? 'active' : 'inactive'})`);
+      
+      // Update the badge to indicate status
+      if (isActive) {
+        chrome.action.setBadgeText({ 
+          text: '!', 
+          tabId 
+        });
+        chrome.action.setBadgeBackgroundColor({ 
+          color: '#4CAF50', 
+          tabId 
+        });
+      } else {
+        chrome.action.setBadgeText({ 
+          text: '', 
+          tabId 
+        });
+      }
+    }).catch(error => {
+      console.error('Error updating extension icon:', error);
+    });
+    
+  } catch (error) {
+    console.error('Error in updateExtensionIcon:', error);
+  }
 }
 
 // Listen for messages from content scripts and popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'analyzeText') {
-    analyzeText(request.text).then(analysis => {
-      sendResponse({ analysis });
-    });
-    return true; // Required for async response
-  } else if (request.action === 'getSettings') {
+  console.log('Background script received message:', { request, sender });
+  
+  // Handle content script ready notification
+  if (request.action === 'contentScriptReady') {
+    console.log('Content script ready:', sender.tab ? `Tab ${sender.tab.id}` : 'unknown tab');
+    
+    // If this is a local file, analyze it
+    if (request.isLocalFile) {
+      console.log('Local file detected, analyzing...');
+      if (sender.tab && sender.tab.id) {
+        analyzeTab(sender.tab.id);
+      }
+    }
+    
+    sendResponse({ status: 'ready' });
+    return true;
+  }
+  
+  // Handle settings requests
+  if (request.action === 'getSettings') {
     chrome.storage.sync.get('settings', (data) => {
       const settings = { ...DEFAULT_SETTINGS, ...data.settings };
       sendResponse({ settings });
     });
-    return true;
+    return true; // Required for async response
   } else if (request.action === 'saveSettings') {
     chrome.storage.sync.set({ settings: request.settings }, () => {
       sendResponse({ success: true });
     });
     return true;
   }
+  return false;
 });
-
-// Mock analysis function - in a real app, this would call an API
-async function analyzeText(text) {
-  // This is a simplified analysis
-  // In a real implementation, you would:
-  // 1. Check user preferences for analysis method
-  // 2. Either analyze locally or call an API
-  // 3. Process and return the results
-  
-  return new Promise(resolve => {
-    setTimeout(() => {
-      // Mock analysis based on common terms patterns
-      const hasDataCollection = /data\s*collection|collect\s*data|personal\s*information/i.test(text);
-      const hasThirdParty = /third[\s-]*party|share.*data|partner.*data/i.test(text);
-      const hasArbitration = /arbitration|dispute\s*resolution|waive.*rights/i.test(text);
-      const hasAutoRenew = /auto[\s-]*renew|automatic.*renewal|subscription.*renew/i.test(text);
-      const hasCancellation = /cancel.*subscription|terminate.*agreement|cancellation.*policy/i.test(text);
-      
-      const sections = [];
-      
-      if (hasDataCollection) {
-        sections.push({
-          title: 'Data Collection',
-          summary: 'This service collects personal information including name, email, and browsing data.',
-          riskLevel: 'high',
-          impact: 0.8
-        });
-      }
-      
-      if (hasThirdParty) {
-        sections.push({
-          title: 'Third-Party Sharing',
-          summary: 'Your data may be shared with third parties for analytics and advertising purposes.',
-          riskLevel: 'high',
-          impact: 0.9
-        });
-      }
-      
-      if (hasArbitration) {
-        sections.push({
-          title: 'Arbitration Clause',
-          summary: 'This agreement includes an arbitration clause that may limit your legal options in case of disputes.',
-          riskLevel: 'medium',
-          impact: 0.7
-        });
-      }
-      
-      if (hasAutoRenew) {
-        sections.push({
-          title: 'Auto-Renewal',
-          summary: 'This service may automatically renew your subscription unless canceled before the renewal date.',
-          riskLevel: 'medium',
-          impact: 0.6
-        });
-      }
-      
-      if (hasCancellation) {
-        sections.push({
-          title: 'Cancellation Policy',
-          summary: 'You can cancel your subscription, but terms may apply for refunds or early termination.',
-          riskLevel: 'low',
-          impact: 0.3
-        });
-      }
-      
-      // Add default sections if none were matched
-      if (sections.length === 0) {
-        sections.push(
-          {
-            title: 'Standard Terms',
-            summary: 'This appears to be a standard terms and conditions document.',
-            riskLevel: 'low',
-            impact: 0.2
-          }
-        );
-      }
-      
-      // Calculate overall risk score (0-100)
-      const riskScore = Math.min(100, Math.round(
-        sections.reduce((sum, section) => sum + (section.impact * 100), 0) / sections.length
-      ));
-      
-      // Generate key points
-      const keyPoints = [];
-      if (hasDataCollection) keyPoints.push('Collects personal data' + (hasThirdParty ? ' and shares with third parties' : ''));
-      if (hasArbitration) keyPoints.push('Includes arbitration clause');
-      if (hasAutoRenew) keyPoints.push('Automatic renewal terms may apply');
-      if (hasCancellation) keyPoints.push('Specific cancellation policy in place');
-      
-      resolve({
-        riskScore,
-        keyPoints: keyPoints.length > 0 ? keyPoints : ['Standard terms and conditions'],
-        sections,
-        analyzedAt: new Date().toISOString()
-      });
-    }, 800); // Simulate processing time
-  });
-}
 
 // Handle installation or update
 chrome.runtime.onInstalled.addListener((details) => {
