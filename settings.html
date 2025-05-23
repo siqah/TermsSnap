@@ -2,78 +2,264 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TermsSnap Settings</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    body {
-      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      background-color: #f5f5f5;
+    :root {
+      /* Light Theme (default) */
+      --primary-color: #1a73e8;
+      --primary-hover: #1557b0;
+      --background: #f5f5f5;
+      --card-bg: #ffffff;
+      --text-primary: #202124;
+      --text-secondary: #5f6368;
+      --border-color: #dadce0;
+      --success-color: #34a853;
+      --header-bg: var(--primary-color);
+      --footer-bg: var(--card-bg);
+      --shadow-color: rgba(0, 0, 0, 0.1);
+      --input-bg: #ffffff;
+      --switch-bg: #ccc;
+    }
+    
+    /* Dark Theme */
+    html[data-theme="dark"],
+    html[data-theme="dark"] body {
+      --background: #121212;
+      --card-bg: #1e1e1e;
+      --text-primary: #e1e1e1;
+      --text-secondary: #9aa0a6;
+      --border-color: #3c4043;
+      --header-bg: #1a1a1a;
+      --footer-bg: #1a1a1a;
+      --shadow-color: rgba(0, 0, 0, 0.3);
+      --input-bg: #2d2d2d;
+      --switch-bg: #555;
+      color: var(--text-primary);
+      background-color: var(--background);
+    }
+    
+    /* Force background color on html and body */
+    html, body {
+      background-color: var(--background);
+      color: var(--text-primary);
+    }
+    
+    * {
+      box-sizing: border-box;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+    
+    html, body {
+      height: 100%;
       margin: 0;
       padding: 0;
-      color: #333;
     }
-    .settings-container {
-      width: 400px;
-      margin: 0 auto;
+    
+    body {
+      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: var(--background);
+      color: var(--text-primary);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    .header {
+      background-color: var(--header-bg);
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 5px var(--shadow-color);
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .back-button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s;
+    }
+    
+    .back-button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .back-button i {
+      font-size: 16px;
+    }
+    
+    .header h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .main-content {
+      flex: 1;
+      width: 100%;
       padding: 20px;
+      overflow-y: auto;
     }
-    .setting-group {
-      background: white;
+    
+    .settings-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+      width: 100%;
+    }
+    
+    .settings-section {
+      background: var(--card-bg);
       border-radius: 12px;
       padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 10px var(--shadow-color);
+      transition: transform 0.2s, box-shadow 0.2s;
+      height: auto;
     }
+    
+    .settings-section:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px var(--shadow-color);
+    }
+    
     .setting-group h2 {
       margin: 0 0 20px 0;
-      color: #1a73e8;
+      color: var(--primary-color);
       font-size: 18px;
       font-weight: 500;
       padding-bottom: 10px;
-      border-bottom: 1px solid #e8eaed;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
+    
     .setting-item {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #f1f3f4;
+      align-items: flex-start;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-color);
+      gap: 20px;
     }
+    
     .setting-item:last-child {
       border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
     }
+    
     .setting-label {
       flex: 1;
-      padding-right: 15px;
+      min-width: 0;
     }
+    
     .setting-label h3 {
       margin: 0 0 4px 0;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 500;
-      color: #202124;
+      color: var(--text-primary);
     }
+    
     .setting-label p {
       margin: 0;
       font-size: 13px;
-      color: #5f6368;
+      color: var(--text-secondary);
       line-height: 1.4;
     }
+    
+    /* Form Controls */
+    .text-input,
+    .number-input,
+    .select-input {
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 14px;
+      color: var(--text-primary);
+      width: 100%;
+      max-width: 200px;
+      box-sizing: border-box;
+    }
+    
+    .text-input:focus,
+    .number-input:focus,
+    .select-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+    }
+    
+    .number-input {
+      width: 80px;
+      text-align: center;
+    }
+    
+    .select-input {
+      height: 38px;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 16px;
+      padding-right: 32px;
+    }
+    
+    .setting-label h3 {
+      margin: 0 0 4px 0;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    
+    .setting-label p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    /* Toggle switch */
     .switch {
       position: relative;
       display: inline-block;
-      width: 44px;
+      width: 50px;
       height: 24px;
-      margin-left: 10px;
-      flex-shrink: 0;
     }
+    
     .switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
+    
     .slider {
       position: absolute;
       cursor: pointer;
@@ -81,106 +267,524 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: #dadce0;
-      transition: .2s;
+      background-color: var(--switch-bg);
+      transition: .4s;
       border-radius: 24px;
     }
+    
     .slider:before {
       position: absolute;
       content: "";
-      height: 20px;
-      width: 20px;
-      left: 2px;
-      bottom: 2px;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
       background-color: white;
-      transition: .2s;
+      transition: .4s;
       border-radius: 50%;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
+    
     input:checked + .slider {
-      background-color: #1a73e8;
+      background-color: var(--primary-color);
     }
-    input:focus + .slider {
-      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
-    }
+    
     input:checked + .slider:before {
-      transform: translateX(20px);
+      transform: translateX(26px);
     }
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 20px;
-      gap: 10px;
+    
+    /* Make the toggle more visible */
+    .switch:hover .slider {
+      box-shadow: 0 0 5px var(--primary-color);
     }
-    button {
-      padding: 8px 16px;
-      border-radius: 4px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background-color 0.2s;
+    
+    /* Ensure the toggle is visible in both themes */
+    [data-theme="dark"] .slider {
+      background-color: #555;
     }
-    #saveSettings {
-      background-color: #1a73e8;
+    
+    [data-theme="dark"] input:checked + .slider {
+      background-color: var(--primary-color);
+    }
+    
+    .btn {
+      background-color: var(--primary-color);
       color: white;
       border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
     }
-    #saveSettings:hover {
-      background-color: #1765d1;
+    
+    .btn:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
     }
-    #cancelButton {
-      background-color: #f1f3f4;
-      color: #5f6368;
-      border: 1px solid #dadce0;
+    
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
     }
-    #cancelButton:hover {
-      background-color: #e8eaed;
+    
+    .btn-outline:hover {
+      background: rgba(26, 115, 232, 0.1);
     }
-    #statusMessage {
-      margin-top: 15px;
+    
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: var(--text-secondary);
       font-size: 13px;
-      min-height: 20px;
-      text-align: right;
-      color: #5f6368;
+      padding: 20px;
+      background: var(--footer-bg);
+    }
+    
+    /* Status Message */
+    .status-message {
+      display: none;
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    .status-message.success {
+      background-color: rgba(52, 168, 83, 0.1);
+      color: #1e8e3e;
+      border-left: 4px solid #1e8e3e;
+    }
+    
+    .status-message.error {
+      background-color: rgba(234, 67, 53, 0.1);
+      color: #d93025;
+      border-left: 4px solid #d93025;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .main-content {
+        padding: 15px;
+      }
+      
+      .header {
+        padding: 12px 15px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="settings-container">
-    <div class="setting-group">
-      <h2>General Settings</h2>
+  <header class="header">
+    <div class="header-left">
+      <button id="back-button" class="back-button" title="Back to Popup">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <h1><i class="fas fa-cog"></i> TermsSnap Settings</h1>
+    </div>
+  </header>
+  
+  <div class="main-content">
+    <div class="settings-container">
+      <div id="status-message" class="status-message"></div>
       
-      <div class="setting-item">
-        <div class="setting-label">
-          <h3>Auto-detect Terms Pages</h3>
-          <p>Automatically analyze pages that appear to contain terms and conditions</p>
+      <div class="settings-grid">
+        <!-- General Settings -->
+        <div class="settings-section">
+          <h2>General</h2>
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Dark Mode</h3>
+              <p>Enable dark theme across the extension</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="dark-mode">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Auto-analyze pages</h3>
+              <p>Automatically analyze terms and conditions on page load</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="auto-analyze">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Show notifications</h3>
+              <p>Show desktop notifications for important updates</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="show-notifications">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Enhanced privacy mode</h3>
+              <p>Limit data collection and tracking</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="enhanced-privacy">
+              <span class="slider round"></span>
+            </label>
+          </div>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="autoDetect">
-          <span class="slider"></span>
-        </label>
-      </div>
-      
-      <div class="setting-item">
-        <div class="setting-label">
-          <h3>Show Notifications</h3>
-          <p>Show desktop notifications when analysis is complete</p>
+        
+        <!-- Alerts Section -->
+        <div class="settings-section">
+          <h2>Alerts & Notifications</h2>
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Enable Alerts</h3>
+              <p>Get notified about important terms and changes</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="alerts-enabled">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Alert Keywords</h3>
+              <p>Comma-separated list of terms to alert on</p>
+            </div>
+            <input type="text" id="alert-keywords" class="text-input" placeholder="arbitration, data sharing, termination">
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Notify on Policy Changes</h3>
+              <p>Get notified when policies you've viewed are updated</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="notify-on-change">
+              <span class="slider round"></span>
+            </label>
+          </div>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="showNotifications">
-          <span class="slider"></span>
-        </label>
+        
+        <!-- Export Settings -->
+        <div class="settings-section">
+          <h2>Export Settings</h2>
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Export Format</h3>
+              <p>Default format for exported documents</p>
+            </div>
+            <select id="export-format" class="select-input">
+              <option value="pdf">PDF</option>
+              <option value="html">HTML</option>
+              <option value="txt">Text</option>
+            </select>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Include Summary</h3>
+              <p>Include AI-generated summary in exports</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="include-summary">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Include Full Text</h3>
+              <p>Include the full document text in exports</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="include-full-text">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+        
+        <!-- Privacy Settings -->
+        <div class="settings-section">
+          <h2>Privacy</h2>
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Data Retention (Days)</h3>
+              <p>How long to keep your analysis history</p>
+            </div>
+            <input type="number" id="data-retention" class="number-input" min="1" max="365" value="90">
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Collect Usage Data</h3>
+              <p>Help improve TermsSnap by sending anonymous usage data</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="collect-usage-data">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Auto-clear History</h3>
+              <p>Automatically clear analysis history when browser closes</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="auto-clear-history">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+        
+        <!-- Language Settings -->
+        <div class="settings-section">
+          <h2>Language</h2>
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Auto-detect Language</h3>
+              <p>Detect document language automatically</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="detect-language">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Translate To</h3>
+              <p>Default language for translations</p>
+            </div>
+            <select id="translate-to" class="select-input">
+              <!-- Options will be populated by JavaScript -->
+            </select>
+          </div>
+        </div>
+        
+        <!-- Analysis Settings -->
+        <div class="settings-section">
+          <h2>Analysis</h2>
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Sentiment Analysis</h3>
+              <p>Analyze the tone and sentiment of the text</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="sentiment-analysis">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Risk Scoring</h3>
+              <p>Calculate risk scores for policy sections</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="risk-scoring">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Generate Summary</h3>
+              <p>Create an AI-generated summary of the document</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="generate-summary">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Highlight Key Points</h3>
+              <p>Automatically highlight important clauses</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="highlight-key-points">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+        
+        <!-- Privacy & Security Card -->
+        <div class="setting-group">
+          <h2><i class="fas fa-shield-alt"></i> Privacy & Security</h2>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Enhanced privacy mode</h3>
+              <p>Prevent tracking by not loading external resources</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="enhanced-privacy">
+              <span class="slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Clear analysis history</h3>
+              <p>Remove all stored analysis data from your browser</p>
+            </div>
+            <button id="clear-history" class="btn btn-outline">
+              <i class="fas fa-trash-alt"></i> Clear
+            </button>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Export data</h3>
+              <p>Download your analysis history as a file</p>
+            </div>
+            <button id="export-data" class="btn btn-outline">
+              <i class="fas fa-file-export"></i> Export
+            </button>
+          </div>
+        </div>
+        
+        <!-- About & Support Card -->
+        <div class="setting-group">
+          <h2><i class="fas fa-info-circle"></i> About & Support</h2>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Version</h3>
+              <p id="version">1.0.0</p>
+            </div>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Documentation</h3>
+              <p>Learn how to use TermsSnap</p>
+            </div>
+            <button id="docs-button" class="btn btn-outline">
+              <i class="fas fa-book"></i> View
+            </button>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Report an issue</h3>
+              <p>Found a bug or have a suggestion?</p>
+            </div>
+            <button id="report-issue" class="btn btn-outline">
+              <i class="fas fa-bug"></i> Report
+            </button>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-label">
+              <h3>Rate this extension</h3>
+              <p>Enjoying TermsSnap? Leave a review</p>
+            </div>
+            <button id="rate-button" class="btn btn-outline">
+              <i class="fas fa-star"></i> Rate
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-    
-    <div class="buttons">
-      <button id="cancelButton">Cancel</button>
-      <button id="saveSettings">Save Changes</button>
-    </div>
-    
-    <div id="statusMessage"></div>
   </div>
   
-  <script src="settings.js"></script>
+  <div class="footer">
+    <div class="footer-content">
+      <p>&copy; 2025 TermsSnap. All rights reserved.</p>
+      <div class="legal-links">
+        <a href="privacy/privacy-policy.html" target="_blank">Privacy Policy</a>
+        <span class="divider">•</span>
+        <a href="privacy/terms-of-service.html" target="_blank">Terms of Service</a>
+        <span class="divider">•</span>
+        <a href="privacy/data-processing-agreement.html" target="_blank">DPA</a>
+      </div>
+    </div>
+  </div>
+  
+  <style>
+    .footer {
+      background-color: var(--footer-bg);
+      padding: 16px 24px;
+      text-align: center;
+      border-top: 1px solid var(--border-color);
+      margin-top: auto;
+    }
+    
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .footer p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    
+    .legal-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .legal-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    
+    .legal-links a:hover {
+      color: var(--primary-color);
+      text-decoration: underline;
+    }
+    
+    .divider {
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    
+    @media (max-width: 480px) {
+      .legal-links {
+        flex-direction: column;
+        gap: 4px;
+      }
+      
+      .divider {
+        display: none;
+      }
+    }
+  </style>
+  
+  <!-- External JavaScript -->
+  <script type="module" src="js/settings-new.js"></script>
 </body>
 </html>

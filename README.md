@@ -1,4 +1,130 @@
-# TermsSnap - Terms & Conditions Analyzer
+# TermsSnap
+
+A Chrome extension that helps you analyze and understand Terms & Conditions and Privacy Policies with ease.
+
+## Features
+
+### 1. Automatic Analysis
+- Automatically detects and analyzes terms and conditions pages
+- Highlights important clauses and key points
+- Provides risk scores for different sections
+
+### 2. Alerts & Notifications
+- Get notified about important terms and conditions
+- Set custom keywords to monitor
+- Receive alerts when policies change
+
+### 3. Export Options
+- Export analyzed documents in multiple formats (PDF, HTML, Text)
+- Choose to include summaries or full text
+- Save your analysis for future reference
+
+### 4. Privacy Controls
+- Control what data is collected
+- Set data retention periods
+- Enable/disable usage data collection
+
+### 5. Multi-language Support
+- Auto-detect document language
+- Translate content to your preferred language
+- Supports multiple languages
+
+### 6. Advanced Analysis
+- Sentiment analysis of policy text
+- Risk scoring for different clauses
+- AI-generated summaries
+- Key point highlighting
+
+## Installation
+
+1. Clone this repository or download the source code
+2. Open Chrome and go to `chrome://extensions/`
+3. Enable "Developer mode" in the top right corner
+4. Click "Load unpacked" and select the extension directory
+
+## Usage
+
+1. Click the TermsSnap icon in your browser toolbar to open the popup
+2. Navigate to any terms and conditions or privacy policy page
+3. The extension will automatically analyze the page
+4. Use the settings page to customize your experience
+
+## Settings
+
+Access the settings page by right-clicking the extension icon and selecting "Options" or by clicking the settings icon in the popup.
+
+### General
+- Toggle dark mode
+- Enable/disable auto-analysis
+- Configure notifications
+- Enhanced privacy mode
+
+### Alerts
+- Enable/disable alerts
+- Set custom keywords
+- Configure notification preferences
+
+### Export
+- Choose export format (PDF, HTML, Text)
+- Include/exclude summaries
+- Include/exclude full text
+
+### Privacy
+- Set data retention period
+- Toggle usage data collection
+- Auto-clear history
+
+### Language
+- Auto-detect language
+- Set preferred translation language
+
+### Analysis
+- Toggle sentiment analysis
+- Enable/disable risk scoring
+- Configure summary generation
+- Toggle key point highlighting
+
+## Development
+
+### Project Structure
+
+```
+TermsSnap/
+├── js/
+│   ├── background.js     # Background script
+│   ├── content-features.js # Content script features
+│   ├── shared-settings.js  # Shared settings module
+│   ├── settings-new.js     # Settings page logic
+│   └── utils.js           # Utility functions
+├── css/
+│   └── popup.css        # Popup styles
+├── icons/                 # Extension icons
+├── popup.html             # Popup UI
+├── settings.html          # Settings page
+└── manifest.json          # Extension manifest
+```
+
+### Building
+
+1. Make your changes to the source code
+2. Test your changes in Chrome
+3. Package the extension for distribution:
+   - Go to `chrome://extensions/`
+   - Click "Pack extension"
+   - Select the extension directory
+   - Click "Pack Extension"
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+For support, please open an issue in the GitHub repository. - Terms & Conditions Analyzer
 
 A Chrome extension that helps users understand and evaluate Terms & Conditions agreements by providing summaries and risk assessments.
 

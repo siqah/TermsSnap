@@ -358,14 +358,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-    // Add settings button event listener
+    // Add settings button event listener with enhanced error handling
     const settingsButton = document.getElementById('settings-button');
     if (settingsButton) {
+      console.log('Settings button found, adding click handler');
       settingsButton.addEventListener('click', () => {
-        chrome.runtime.openOptionsPage();
+        console.log('Settings button clicked');
+        try {
+          chrome.runtime.openOptionsPage(() => {
+            if (chrome.runtime.lastError) {
+              console.error('Error opening options page:', chrome.runtime.lastError);
+            } else {
+              console.log('Options page opened successfully');
+            }
+          });
+        } catch (error) {
+          console.error('Error in settings button click handler:', error);
+        }
       });
     } else {
-      console.warn('Settings button not found');
+      console.error('Settings button not found in the DOM');
     }
     
     // Initialize buttons with proper error handling
